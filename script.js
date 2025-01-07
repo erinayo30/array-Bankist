@@ -171,6 +171,27 @@ btnTransfer.addEventListener('click', function (e) {
   }
   inputTransferAmount.value = inputTransferTo.value = '';
 });
+// find indexof
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  if (
+    inputCloseUsername.value === currentAccount.userName &&
+    Number(inputClosePin.value) === currentAccount.pin
+  ) {
+    const deleteIndex = accounts.findIndex(
+      acc => acc.userName === currentAccount.userName
+    );
+    console.log(deleteIndex);
+    // Delete Account
+    accounts.splice(deleteIndex, 1);
+
+    inputLoginPin.blur();
+  }
+  inputCloseUsername.value = inputClosePin.value = '';
+  // Hide UI
+  containerApp.style.opacity = 0;
+});
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
