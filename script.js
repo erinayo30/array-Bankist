@@ -61,9 +61,11 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const displayMovement = function (movements) {
+const displayMovement = function (movements, sort = false) {
   containerMovements.innerHTML = '';
-  movements.forEach(function (mov, i) {
+
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `
      <div class="movements">
@@ -76,6 +78,7 @@ const displayMovement = function (movements) {
       </div> `;
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
+  console.log(movs);
 };
 
 const createUserNames = function (accs) {
@@ -171,6 +174,22 @@ btnTransfer.addEventListener('click', function (e) {
   }
   inputTransferAmount.value = inputTransferTo.value = '';
 });
+// Loan request
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  const amount = Number(inputLoanAmount.value);
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
+    // add movement
+    currentAccount.movements.push(amount);
+
+    console.log(amount);
+    inputLoanAmount.value = '';
+    inputLoanAmount.blur();
+    updateUI(currentAccount);
+  }
+});
+
 // find indexof
 btnClose.addEventListener('click', function (e) {
   e.preventDefault();
@@ -193,6 +212,12 @@ btnClose.addEventListener('click', function (e) {
   containerApp.style.opacity = 0;
 });
 
+let sorted = false;
+btnSort.addEventListener('click', function (e) {
+  e.preventDefault();
+  displayMovement(currentAccount.movements, !sorted);
+  sorted = !sorted;
+});
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -272,3 +297,23 @@ console.log(withdrawals);
 // Find Account
 const account = accounts.find(acc => acc.owner === 'Jessica Davis');
 console.log(account);
+
+// Flat method
+const overAllBalance = accounts
+  .map(acc => acc.movements)
+  .flat()
+  .reduce((acc, mov) => acc + mov, 0);
+console.log(overAllBalance);
+
+// FlatMap
+const overAllBalance2 = accounts
+  .flatMap(acc => acc.movements)
+  .reduce((acc, mov) => acc + mov, 0);
+console.log(overAllBalance2);
+// Sort method
+
+movements.sort((a, b) => {
+  // if (a < b) return 1;
+  if (a > b) return -1;
+});
+console.log(movements);
